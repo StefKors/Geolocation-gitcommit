@@ -1,0 +1,13 @@
+#!/bin/bash
+#http://iharder.sourceforge.net/current/macosx/locateme/
+#copy paste the content of this file into the .git/hooks/prepare-commit-msg file
+#install locateme into your project directory
+
+LAT=`./LocateMe -f "{LAT}"`
+LNG=`./LocateMe -f "{LON}"`
+
+URL="http://maps.googleapis.com/maps/api/geocode/json?latlng=$LAT,$LNG&sensor=false"
+ADDRESS=`eval "curl -s \"$URL\" | grep formatted_address | head -n 1 | sed 's/\"//g' | sed 's/,//g'"`
+ADDRESS=`echo $ADDRESS | awk -F' : ' '{print $2}'`
+
+echo "$ADDRESS: $(cat $1)" > $1
